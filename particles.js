@@ -117,6 +117,47 @@ window.addEventListener('mousemove', (e) => {
   mouse.active = true;
 });// 鼠标监听
 
+// 电脑端鼠标监听
+// window.addEventListener('mousemove', (e) => {
+//   mouse.prevX = mouse.x;
+//   mouse.prevY = mouse.y;
+//   mouse.x = e.x;
+//   mouse.y = e.y;
+//   mouse.active = true;
+// });
+// window.addEventListener('mouseout', () => mouse.active = false);
+
+// 新增：手机端触摸滑动（模拟鼠标移动，核心修复）
+window.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // 禁止页面抖动
+  const touch = e.touches[0];
+  mouse.prevX = touch.clientX;
+  mouse.prevY = touch.clientY;
+  mouse.x = touch.clientX;
+  mouse.y = touch.clientY;
+  mouse.active = true;
+});
+window.addEventListener('touchmove', (e) => {
+  e.preventDefault(); // 禁止页面滚动干扰
+  const touch = e.touches[0];
+  // 同步记录轨迹（保证空缺填补/涡街效果生效）
+  mouse.prevX = mouse.x;
+  mouse.prevY = mouse.y;
+  mouse.x = touch.clientX;
+  mouse.y = touch.clientY;
+});
+window.addEventListener('touchend', () => {
+  mouse.active = false; // 手指离开=鼠标移出
+});
+
+// 窗口大小适配
+window.addEventListener('resize', () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+});
+
 window.addEventListener('mouseout', () => mouse.active = false);// 鼠标离开时停用交互
 
 window.addEventListener('resize', () => {
