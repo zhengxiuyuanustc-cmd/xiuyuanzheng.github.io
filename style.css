@@ -1,0 +1,223 @@
+/* 全局基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    max-width: 900px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+    line-height: 1.7;
+    color: #2d3436;
+    background-color: #fafbfc;
+    scroll-behavior: smooth;
+}
+
+/* 固定导航栏 */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    z-index: 999;
+    text-align: center;
+}
+
+.navbar a {
+    margin: 0 15px;
+    color: #2d3436;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #1a73e8;
+}
+
+/* 个人信息头部 */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #1a73e8;
+    background: #eef5ff;
+    background-image: url('photo.jpg'); /* 替换为你的头像图片路径 */
+    background-size: cover;
+}
+
+.info h1 {
+    font-size: 2.2em;
+    color: #1a73e8;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #636e72;
+    font-size: 1.1em;
+    margin: 5px 0;
+}
+
+.contact {
+    margin-top: 15px;
+    font-size: 1em;
+}
+
+.contact a {
+    color: #1a73e8;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+.contact a:hover {
+    text-decoration: underline;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 10px;
+    background: #1a73e8;
+    color: white !important;
+    border-radius: 6px;
+    text-decoration: none !important;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #0d5bbc;
+}
+
+/* 板块样式 */
+.section {
+    margin: 40px 0;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+}
+
+.section h2 {
+    color: #1a73e8;
+    border-bottom: 2px solid #eef5ff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+/* 项目卡片 */
+.project {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #1a73e8;
+}
+
+.project-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #2d3436;
+}
+
+.tags {
+    color: #636e72;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+/* 列表样式 */
+ul {
+    list-style-position: inside;
+    padding-left: 10px;
+}
+
+li {
+    margin: 10px 0;
+}
+
+/* 页脚 */
+.footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px;
+    color: #636e72;
+    font-size: 0.9em;
+    border-top: 1px solid #eee;
+}
+
+/* 粒子画布样式 */
+#particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background: #fafbfc;
+  filter: blur(0.5px);/* 轻微模糊增加层次感 */
+  opacity: 0.7;/* 调整粒子画布的透明度，增强背景效果 */
+}
+
+/* 手机适配 */
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .navbar a {
+        margin: 0 8px;
+        font-size: 0.9em;
+    }
+}
+
+
+/* 切换按钮样式 */
+#toggleBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 10px 15px;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+#toggleBtn:hover {
+  background: #0d5bbc;
+}
+
+/* 内容完全隐藏（透明+不可点击） */
+.content-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.5s ease;
+}
+
+/* 纯玩粒子时：取消模糊和透明度 */
+#particles.clear {
+  filter: blur(0px);
+  opacity: 1;
+}

@@ -1,43 +1,61 @@
+<!--
+Xiuyuan Zheng 2026 (C) All rights reserved.
+-->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Xiuyuan Zheng | USTC</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-            line-height: 1.6;
-            color: #333;
-        }
-        h1 { font-size: 2em; margin-bottom: 0; }
-        .subtitle { color: #666; margin-top: 0; font-size: 1.1em; }
-        a { color: #0366d6; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .section { margin: 30px 0; }
-        h2 { border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .project { margin: 20px 0; }
-        .project-title { font-weight: bold; }
-        .tags { color: #666; font-size: 0.9em; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xiuyuan Zheng | USTC | Theoretical and Applied Mechanics</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入独立CSS文件 -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <h1>Xiuyuan Zheng</h1>
-    <div class="subtitle">Undergraduate Student | Theoretical and Applied Mechanics</div>
-    <div class="subtitle">University of Science and Technology of China (USTC)</div>
-    <p>
-        Email: zhengxiuyuan@mail.ustc.edu.cn<br>
-        GitHub: <a href="https://github.com/你的用户名">github.com/你的用户名</a><br>
-        CV: <a href="cv.pdf">Download PDF</a>
-    </p>
 
-    <div class="section">
-        <h2>About Me</h2>
-        <p>I am a junior undergraduate student at USTC, majoring in Theoretical and Applied Mechanics with a minor in Computer Science. My research interests lie at the intersection of computational mechanics, scientific computing, and machine learning. I am currently exploring adaptive mesh generation and deep learning methods for fracture prediction.</p>
+<body>
+    <!-- 粒子画布 -->
+    <canvas id="particles"></canvas>
+
+    <!-- 粒子隐藏/显示切换按钮 -->
+    <button id="toggleBtn"> hide content</button>
+    
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <a href="#about">About</a>
+        <a href="#research">Research</a>
+        <a href="#skills">Skills</a>
+        <a href="#awards">Awards</a>
     </div>
 
-    <div class="section">
+    <!-- 个人头部 -->
+    <div class="header">
+        <div class="avatar"></div>
+        <div class="info">
+            <h1>Xiuyuan Zheng 郑修远</h1>
+            <div class="subtitle">Undergraduate Student</div>
+            <div class="subtitle">Theoretical and Applied Mechanics | Computer Science (Minor) | USTC</div>
+            <div class="contact">
+                <i class="fas fa-envelope"></i> zhengxiuyuan@mail.ustc.edu.cn<br>
+                <a href="https://github.com/zhengxiuyuanustc-cmd" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <!-- <a href="#" target="_blank"><i class="fas fa-graduation-cap"></i> Google Scholar</a> --><!-- 这里暂时没有发表的文章，先注释掉 -->
+                <a href="CV_XiuyuanZheng_USTC.pdf" class="btn"><i class="fas fa-file-pdf"></i> Download CV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关于我 -->
+    <div class="section" id="about">
+        <h2>About Me</h2>
+        <p>I am a junior undergraduate student at USTC, 
+            majoring in Theoretical and Applied Mechanics with a minor in Computer Science. 
+            My research interests lie at the intersection of computational mechanics, 
+            scientific computing, and machine learning. 
+            I am currently exploring adaptive mesh generation and deep learning methods 
+            for fracture prediction.</p>
+    </div>
+
+    <!-- 研究项目 -->
+    <div class="section" id="research">
         <h2>Research Projects</h2>
         <div class="project">
             <div class="project-title">Adaptive Mesh Generation for Complex Tire Structures</div>
@@ -51,16 +69,18 @@
         </div>
     </div>
 
-    <div class="section">
+    <!-- 技术技能 -->
+    <div class="section" id="skills">
         <h2>Technical Skills</h2>
         <ul>
-            <li><strong>Languages:</strong> C++, Python (PyTorch, TensorFlow, NumPy), MATLAB</li>
-            <li><strong>Simulation:</strong> ABAQUS, COMSOL</li>
-            <li><strong>Areas:</strong> Finite Element Analysis, Adaptive Mesh Generation, Scientific Computing, Machine Learning</li>
+            <li><strong>Languages:</strong> C/C++, Python (PyTorch, TensorFlow, NumPy), MATLAB</li>
+            <li><strong>Simulation Software:</strong> ABAQUS, COMSOL, Finite Element Analysis</li>
+            <li><strong>Research Areas:</strong> Adaptive Mesh Generation, Scientific Computing, Machine Learning for Mechanics</li>
         </ul>
     </div>
 
-    <div class="section">
+    <!-- 奖项荣誉 -->
+    <div class="section" id="awards">
         <h2>Awards & Honors</h2>
         <ul>
             <li>Outstanding Student Scholarship, Silver Award (Top 10%)</li>
@@ -68,5 +88,14 @@
             <li>Second Prize, "Challenge Cup" Anhui Provincial Competition</li>
         </ul>
     </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        © 2026 Xiuyuan Zheng | University of Science and Technology of China <br>
+        Last Updated: March 2026
+    </div>
+
+    <!-- 引入独立粒子JS文件 -->
+    <script src="particles.js"></script>
 </body>
 </html>

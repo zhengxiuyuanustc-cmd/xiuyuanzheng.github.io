@@ -1,0 +1,369 @@
+<!--
+Xiuyuan Zheng 2026 (C) All rights reserved.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xiuyuan Zheng | USTC | Theoretical and Applied Mechanics | Computer Science (Minor)</title>
+    <!-- 轻量图标库（学术专用，无延迟） -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 全局基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 900px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+            line-height: 1.7;
+            color: #2d3436;
+            background-color: #fafbfc;
+            scroll-behavior: smooth;
+        }
+
+        /* 固定导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 15px 0;
+            z-index: 999;
+            text-align: center;
+        }
+
+        .navbar a {
+            margin: 0 15px;
+            color: #2d3436;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            color: #1a73e8;
+        }
+
+        /* 个人信息头部 */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #1a73e8;
+            background: #eef5ff;
+            /* 替换为你的头像：把照片命名为 photo.jpg 放在同一文件夹即可 */
+            background-image: url('photo.jpg');
+            background-size: cover;
+        }
+
+        .info h1 {
+            font-size: 2.2em;
+            color: #1a73e8;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #636e72;
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+
+        .contact {
+            margin-top: 15px;
+            font-size: 1em;
+        }
+
+        .contact a {
+            color: #1a73e8;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-top: 10px;
+            background: #1a73e8;
+            color: white !important;
+            border-radius: 6px;
+            text-decoration: none !important;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #0d5bbc;
+        }
+
+        /* 板块样式 */
+        .section {
+            margin: 40px 0;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        }
+
+        .section h2 {
+            color: #1a73e8;
+            border-bottom: 2px solid #eef5ff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        /* 项目卡片 */
+        .project {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .project-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2d3436;
+        }
+
+        .tags {
+            color: #636e72;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        /* 列表样式 */
+        ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #636e72;
+            font-size: 0.9em;
+            border-top: 1px solid #eee;
+        }
+
+        /* 手机适配 */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .navbar a {
+                margin: 0 8px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* 粒子画布样式 - 插入到 CSS 末尾 */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;    /* 置于底层，不遮挡内容 */
+            pointer-events: none; /* 鼠标穿透，不影响点击 */
+            background: #fafbfc; /* 和你网页背景色一致 */
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- 粒子画布 - 放在 body 最开头 -->
+    <canvas id="particles"></canvas>
+
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <a href="#About">About</a>
+        <a href="#Research">Research</a>
+        <a href="#Skills">Skills</a>
+        <a href="#Awards">Awards</a>
+        <a href="#Miscellanea">Miscellanea</a>
+    </div>
+
+    <!-- 个人头部 -->
+    <div class="header">
+        <div class="avatar"></div>
+        <div class="info">
+            <h1>Xiuyuan Zheng 郑修远</h1>
+            <div class="subtitle">Undergraduate Student</div>
+            <div class="subtitle">Theoretical and Applied Mechanics | Computer Science (Minor) | USTC</div>
+            <div class="contact">
+                <i class="fas fa-envelope"></i> zhengxiuyuan@mail.ustc.edu.cn<br>
+                <a href="https://github.com/zhengxiuyuanustc-cmd" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <!-- <a href="#" target="_blank"><i class="fas fa-graduation-cap"></i> Google Scholar</a> --><!-- 这里暂时没有发表的文章，先注释掉 -->
+                <a href="CV_XiuyuanZheng_USTC.pdf" class="btn"><i class="fas fa-file-pdf"></i> Download CV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关于我 -->
+    <div class="section" id="about">
+        <h2>About Me</h2>
+        <p>I am a junior undergraduate student at USTC, majoring in Theoretical and Applied Mechanics with a minor in Computer Science. My research interests lie at the intersection of computational mechanics, scientific computing, and machine learning. I am currently exploring adaptive mesh generation and deep learning methods for fracture prediction.</p>
+    </div>
+
+    <!-- 研究项目 -->
+    <div class="section" id="research">
+        <h2>Research Projects</h2>
+        <div class="project">
+            <div class="project-title">Adaptive Mesh Generation for Complex Tire Structures</div>
+            <div class="tags">C++ | Advancing Front Method | FEA</div>
+            <p>Developed a C++ program to automatically generate high-quality finite element meshes for complex tire geometries. Implemented local feature extraction algorithms to identify high-stress regions for adaptive refinement.</p>
+        </div>
+        <div class="project">
+            <div class="project-title">Neural Network-Enhanced Adaptive Mesh Optimization</div>
+            <div class="tags">PyTorch | Python | COMSOL</div>
+            <p>Exploring the integration of neural networks to predict optimal mesh density distributions, aiming to automate and optimize the pre-processing pipeline for finite element simulations.</p>
+        </div>
+    </div>
+
+    <!-- 技术技能 -->
+    <div class="section" id="skills">
+        <h2>Technical Skills</h2>
+        <ul>
+            <li><strong>Languages:</strong> C/C++, Python (PyTorch, TensorFlow, NumPy), MATLAB</li>
+            <li><strong>Simulation Software:</strong> ABAQUS, COMSOL, Finite Element Analysis</li>
+            <li><strong>Research Areas:</strong> Adaptive Mesh Generation, Scientific Computing, Machine Learning for Mechanics</li>
+        </ul>
+    </div>
+
+    <!-- 奖项荣誉 -->
+    <div class="section" id="awards">
+        <h2>Awards & Honors</h2>
+        <ul>
+            <li>Outstanding Student Scholarship, Silver Award (Top 10%)</li>
+            <li>First Prize, Anhui Provincial College Students Mechanics Competition</li>
+            <li>Second Prize, "Challenge Cup" Anhui Provincial Competition</li>
+        </ul>
+    </div>
+
+    <!-- 杂项 -->
+    <div class="section" id="Miscellanea">
+        <h2>Miscellanea</h2>
+        <p>If you have any questions or would like to collaborate, feel free to reach out!</p>
+        <p>Email: zhengxiuyuan@mail.ustc.edu.cn</p>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        © 2026 Xiuyuan Zheng <br>
+        Last Updated: March 2026
+    </div>
+
+    <!-- 这里是之前的 CSS 样式，保持不变 -->
+    <script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    // 粒子配置
+    const particleCount = 80;
+    const particles = [];
+    let mouse = { x: null, y: null, radius: 120, active: false };
+
+    // 粒子类
+    class Particle {
+    constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = '#1a73e8'; // 匹配你网页的主题蓝
+    }
+    update() {
+        // 鼠标吸引逻辑
+        if (mouse.active) {
+        const dx = this.x - mouse.x;
+        const dy = this.y - mouse.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < mouse.radius) {
+            // 绕鼠标旋转
+            const angle = Math.atan2(dy, dx);
+            this.x = mouse.x + Math.cos(angle) * mouse.radius;
+            this.y = mouse.y + Math.sin(angle) * mouse.radius;
+        }
+        }
+        // 自由漂浮
+        this.x += this.speedX;
+        this.y += this.speedY;
+        // 边界反弹
+        if (this.x < 0 || this.x > width) this.speedX *= -1;
+        if (this.y < 0 || this.y > height) this.speedY *= -1;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+    }
+
+    // 初始化粒子
+    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+    // 动画循环
+    function animate() {
+    ctx.clearRect(0, 0, width, height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+    }
+    animate();
+
+    // 鼠标监听
+    window.addEventListener('mousemove', (e) => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+    mouse.active = true;
+    });
+    window.addEventListener('mouseout', () => mouse.active = false);
+    window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    });
+    </script>
+
+</body>
+</html>
