@@ -6,7 +6,7 @@ canvas.width = width;
 canvas.height = height;
 
 // 粒子配置
-const particleCount = 700;
+const particleCount = 5000;
 const particles = [];
 // let mouse = { x: null, y: null, radius: 120, active: false };
 // 鼠标 + 卡门涡街核心参数
@@ -38,33 +38,39 @@ update() {
   const distSq = dx * dx + dy * dy; // 弃用 Math.sqrt()
   const invDistSq = 1 / distSq; // 反距离平方（更自然的力学衰减）
   const radiusSq = mouse.radius * mouse.radius; // 同样弃用 Math.sqrt()，直接比较平方距离
+  const repulsiveForce = 8 ; // 鼠标排斥力强度（可调参数）
 
   // ========= 卡门涡街 + 尾流填补逻辑（力学流体模拟） =========
   if (mouse.active && distSq < radiusSq) {
     // const angle = Math.atan2(dy, dx);
     // 1. 鼠标排斥力（靠近指针）
-    this.speedX += dx * invDistSq * 2;
-    this.speedY += dy * invDistSq * 2;
+    this.speedX += dx * invDistSq * repulsiveForce;
+    this.speedY += dy * invDistSq * repulsiveForce;
 
-    // 2. 核心：鼠标后方尾流空缺 → 粒子填补力
-    if (mouse.prevX !== null) {
+    // 2. 核心：鼠标后方尾流空缺 → 粒子填补力（不空缺也有，但更弱）
       const trailDX = mouse.x - mouse.prevX;
       const trailDY = mouse.y - mouse.prevY;
       // 涡街旋转力（模拟流体涡流）
-    //   this.speedX += trailDY * mouse.vortexStrength ;
-    //   this.speedY -= trailDX * mouse.vortexStrength ;
+      const velocity_r_x = this.speedX - trailDX;// 粒子相对于鼠标尾流的相对速度
+      const velocity_r_y = this.speedY - trailDY;
+      const omega = (trailDX * dy - trailDY * dx) * invDistSq; // 旋转方向（基于鼠标移动方向和粒子位置，主要求其正负性，关于其相对位置）
+      this.speedX -= omega * velocity_r_y * mouse.vortexStrength ;
+      this.speedY += omega * velocity_r_x * mouse.vortexStrength ;
       // 负压区填补：粒子向鼠标尾部空缺聚集
     //   this.speedX -= dx * mouse.fillForce;
     //   this.speedY -= dy * mouse.fillForce;
-    }
+    
+    // if (mouse.prevX !== null) {
+
+    // }
   }
 
   // ========= 统一物理阻尼（丝滑运动，删除冗余判断） =========
 //   this.speedX *= 0.97;
 //   this.speedY *= 0.97;
 
-if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.97;
-if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.97;
+if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.9;
+if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.9;
 
   // 引入噪声改变运动轨迹，增加自然感
   this.speedX += (Math.random() - 0.5) * 0.01;
@@ -106,7 +112,8 @@ window.addEventListener('mousemove', (e) => {
   const dy = mouse.y - mouse.prevY;
   mouse.velocity = dx * dx + dy * dy; // 计算鼠标速度（用于动态调整涡街强度）
   // 根据速度动态调整涡街强度（更快的移动产生更强的涡街）
-  mouse.vortexStrength = 0.01 + Math.min(mouse.velocity * 0.000001, 0.05);
+//   mouse.vortexStrength = 0.01 + Math.min(mouse.velocity * 0.000001, 0.05);
+  mouse.vortexStrength = 0.05
   mouse.active = true;
 });// 鼠标监听
 
