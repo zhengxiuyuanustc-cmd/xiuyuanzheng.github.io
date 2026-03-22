@@ -174,7 +174,7 @@ li {
   pointer-events: none;
   background: #fafbfc;
   filter: blur(0.5px);/* 轻微模糊增加层次感 */
-  opacity: 0.7;/* 调整粒子画布的透明度，增强背景效果 */
+  opacity: 0.3;/* 调整粒子画布的透明度，增强背景效果 */
 }
 
 /* 手机适配 */
