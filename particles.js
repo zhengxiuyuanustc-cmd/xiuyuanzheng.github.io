@@ -113,7 +113,7 @@ update() {
   this.speedY += omega * velocity_r_x * mouse.fillForce; ;
 
 
-  // ========= 统一物理阻尼（丝滑运动，删除冗余判断） =========
+  // ========= 统一物理阻尼（丝滑运动） =========
 
   if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.9;
   if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.9;
