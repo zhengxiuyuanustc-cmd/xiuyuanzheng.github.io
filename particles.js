@@ -10,21 +10,23 @@ canvas.height = height;
 let particleCount;
 const screenWidth = window.innerWidth;
 if (screenWidth > 1200) {
-  particleCount = 5000;   // 电脑大屏：高密度粒子
+  particleCount = 10000;   // 电脑大屏：高密度粒子
 } else if (screenWidth > 768) {
   particleCount = 2000;   // 平板/中等屏幕：中等粒子
 } else {
   particleCount = 1000;    // 手机小屏：低密度粒子（丝滑不卡）
 }
+
 const particles = [];
-// let mouse = { x: null, y: null, radius: 120, active: false };
+
 // 鼠标 + 卡门涡街核心参数
 let mouse = { 
     x: null, y: null, radius: 130, active: false,
     prevX: null, prevY: null, // 记录鼠标轨迹（生成尾流）
     velocity: null, //鼠标的速度
+    buttons: null, // 鼠标按键状态
     vortexStrength: 0.1,    // 涡街强度（力学可调参数）
-    fillForce: 0.1          // 空缺填补力
+    fillForce: 0.8          // 空缺填补力
 };
 
 // 粒子类
@@ -44,50 +46,83 @@ update() {
   // ========= 性能优化：用距离平方代替开方，彻底解决卡顿 =========
   const dx = this.x - mouse.x;
   const dy = this.y - mouse.y;
+  const angle = Math.atan2(dy, dx);// 角度（基于粒子相对于鼠标的位置，主要求其正负性，关于其相对位置）
+  const unitX = Math.cos(angle); // 方向单位向量（基于角度，指向粒子相对于鼠标的方向）
+  const unitY = Math.sin(angle);
   const distSq = dx * dx + dy * dy; // 弃用 Math.sqrt()
-  const invDistSq = 1 / distSq; // 反距离平方（更自然的力学衰减）
+  const invDistSq = 1 / distSq; // 反距离平方
   const radiusSq = mouse.radius * mouse.radius; // 同样弃用 Math.sqrt()，直接比较平方距离
-  const repulsiveForce = 8 ; // 鼠标排斥力强度（可调参数）
-  const repulsionForce_adaptive = 0.1; // 自适应排斥力强度（根据鼠标速度动态调整，增加交互感）
+  const repulsiveForce = 500; // 鼠标排斥力强度（可调参数）
+  const repulsionForce_adaptive = 0.8; // 自适应排斥力强度（根据鼠标速度动态调整，增加交互感）
 
   // ========= 卡门涡街 + 尾流填补逻辑（力学流体模拟） =========
-  if (mouse.active && distSq < radiusSq) {
-    // const angle = Math.atan2(dy, dx);
+  // if (mouse.active && distSq < radiusSq) {
+
+
+  //   // if (mouse.buttons === 'left') {// 鼠标左键按下时，增加额外的排斥力
+  //   //   this.speedX += dx * invDistSq * 5;
+  //   //   this.speedY += dy * invDistSq * 5;
+  //   // }
+
+  // }
+
+
+
+    if (mouse.buttons === 'left') {// 鼠标左键按下时，所有粒子绕鼠标逆时针旋转
+
+      this.speedX = unitY * invDistSq * 20000; // 旋转（垂直于鼠标指向粒子的方向，形成涡流效果）
+      this.speedY = -unitX * invDistSq * 20000;
+
+      // this.speedX -= dx * invDistSq * 5; // 增加吸引力（更强的交互感）
+      // this.speedY -= dy * invDistSq * 5;
+
+    }
+
+
+    if (distSq < radiusSq) {
+
     // 1. 鼠标排斥力（靠近指针）
-    this.speedX += dx * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
-    this.speedY += dy * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
+    this.speedX += unitX * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
+    this.speedY += unitY * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
+  
+    }
 
     // 2. 核心：鼠标后方尾流空缺 → 粒子填补力（不空缺也有，但更弱）
-      const trailDX = mouse.x - mouse.prevX;
-      const trailDY = mouse.y - mouse.prevY;
+    const trailDX = mouse.x - mouse.prevX;
+    const trailDY = mouse.y - mouse.prevY;
 
-      const velocity_r_x = this.speedX - trailDX;// 粒子相对于鼠标尾流的相对速度
-      const velocity_r_y = this.speedY - trailDY;
-      const omega = (trailDX * dy - trailDY * dx) * invDistSq; // 旋转矢量（基于鼠标移动方向和粒子位置，主要求其正负性，关于其相对位置）
-
-      // 涡街旋转力（模拟流体涡流）
-
-      // todo: 进一步优化：根据鼠标速度动态调整涡街强度（更快的移动产生更强的涡流效果）
+    const velocity_r_x = this.speedX - trailDX;// 粒子相对于鼠标尾流的相对速度
+    const velocity_r_y = this.speedY - trailDY;
+    const omega = (trailDX * unitY - trailDY * unitX) * invDistSq; // 旋转矢量（基于鼠标移动方向和粒子位置，主要求其正负性，关于其相对位置）
 
 
-
-      // 负压区填补：粒子向鼠标尾部空缺聚集
-
-      this.speedX -= omega * velocity_r_y * mouse.fillForce; // 旋转力对粒子速度的影响（垂直于相对速度方向，形成涡流效果）;
-      this.speedY += omega * velocity_r_x * mouse.fillForce; ;
+  // 尝试添加一个吸引力
+  //  this.speedX -= dx * invDistSq * 0.05; // 吸引力（较弱，增加自然感）
+  //  this.speedY -= dy * invDistSq * 0.05;
 
 
+  // 涡街旋转力（模拟流体涡流）
 
-  }
+  // todo: 进一步优化：根据鼠标速度动态调整涡街强度（更快的移动产生更强的涡流效果）
+
+
+
+  // 负压区填补：粒子向鼠标尾部空缺聚集
+
+  this.speedX -= omega * velocity_r_y * mouse.fillForce; // 旋转力对粒子速度的影响（垂直于相对速度方向，形成涡流效果）;
+  this.speedY += omega * velocity_r_x * mouse.fillForce; ;
+
 
   // ========= 统一物理阻尼（丝滑运动，删除冗余判断） =========
 
-if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.9;
-if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.9;
+  if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.9;
+  if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.9;
+
+
 
   // 引入噪声改变运动轨迹，增加自然感
-  this.speedX += (Math.random() - 0.5) * 0.01;
-  this.speedY += (Math.random() - 0.5) * 0.01;
+  this.speedX += (Math.random() - 0.5) * 0.1;
+  this.speedY += (Math.random() - 0.5) * 0.1;
   // 自由漂浮 + 边界反弹
   this.x += this.speedX;
   this.y += this.speedY;
@@ -127,7 +162,20 @@ window.addEventListener('mousemove', (e) => {
   // 根据速度动态调整填补强度（更快的移动产生更强的填补效果）
 //   mouse.vortexStrength = 0.01 + Math.min(mouse.velocity * 0.000001, 0.05);
   mouse.active = true;
+
 });// 鼠标监听
+
+window.addEventListener('mousedown', (e) => {
+  if (e.button === 0) { // 鼠标左键按下
+    mouse.buttons = 'left';
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  if (e.button === 0) { // 鼠标左键放开
+    mouse.buttons = null;
+  }
+});
 
 // 手机端触摸滑动（模拟鼠标移动，核心修复）
 window.addEventListener('touchstart', (e) => {
@@ -138,6 +186,7 @@ window.addEventListener('touchstart', (e) => {
   mouse.x = touch.clientX;
   mouse.y = touch.clientY;
   mouse.active = true;
+  mouse.buttons = 'left'; // 模拟鼠标左键按下
 });
 
 window.addEventListener('touchmove', (e) => {
@@ -152,6 +201,7 @@ window.addEventListener('touchmove', (e) => {
 
 window.addEventListener('touchend', () => {
   mouse.active = false; // 手指离开=鼠标移出
+  mouse.buttons = null; // 模拟鼠标左键放开
 });
 
 // 窗口大小适配
