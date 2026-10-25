@@ -173,7 +173,6 @@ li {
   z-index: -1;
   pointer-events: none;
   background: #fafbfc;
-  filter: blur(0.5px);/* 轻微模糊增加层次感 */
   opacity: 0.3;/* 调整粒子画布的透明度，增强背景效果 */
 }
 
@@ -216,9 +215,8 @@ li {
   transition: opacity 0.5s ease;
 }
 
-/* 纯玩粒子时：取消模糊和透明度 */
+/* 纯玩粒子时：提高粒子不透明度 */
 #particles.clear {
-  filter: blur(0px);
   opacity: 1;
 }
 /* A small bridge to the author's open-source project. */

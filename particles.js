@@ -1,223 +1,209 @@
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
-let width = window.innerWidth;
-let height = window.innerHeight;
-canvas.width = width;
-canvas.height = height;
-
-// 粒子配置
-// 屏幕自适应粒子数量（根据分辨率自动调整）
-let particleCount;
-const screenWidth = window.innerWidth;
-if (screenWidth > 1200) {
-  particleCount = 10000;   // 电脑大屏：高密度粒子
-} else if (screenWidth > 768) {
-  particleCount = 2000;   // 平板/中等屏幕：中等粒子
-} else {
-  particleCount = 1000;    // 手机小屏：低密度粒子（丝滑不卡）
-}
-
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const FRAME_INTERVAL = 1000 / 60;
+const TWO_PI = Math.PI * 2;
+const RADIUS_SQ = 130 * 130;
+const WAKE_RADIUS_SQ = 260 * 260;
 const particles = [];
+let width = 1;
+let height = 1;
+let animationId = null;
+let resizeId = null;
+let lastFrameTime = null;
+let nextFrameTime = 0;
 
-// 鼠标 + 卡门涡街核心参数
-let mouse = { 
-    x: null, y: null, radius: 130, active: false,
-    prevX: null, prevY: null, // 记录鼠标轨迹（生成尾流）
-    velocity: null, //鼠标的速度
-    buttons: null, // 鼠标按键状态
-    vortexStrength: 0.1,    // 涡街强度（力学可调参数）
-    fillForce: 0.8          // 空缺填补力
+const mouse = {
+  x: 0, y: 0, prevX: 0, prevY: 0,
+  active: false, pressed: false
 };
 
-// 粒子类
 class Particle {
-
-    constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() -0.5)*1;
-        this.speedY = (Math.random() -0.5)*1;
-        this.color = '#1a73e8';
-    }
-
-
-update() {
-  // ========= 性能优化：用距离平方代替开方，彻底解决卡顿 =========
-  const dx = this.x - mouse.x;
-  const dy = this.y - mouse.y;
-  const angle = Math.atan2(dy, dx);// 角度（基于粒子相对于鼠标的位置，主要求其正负性，关于其相对位置）
-  const unitX = Math.cos(angle); // 方向单位向量（基于角度，指向粒子相对于鼠标的方向）
-  const unitY = Math.sin(angle);
-  const distSq = dx * dx + dy * dy; // 弃用 Math.sqrt()
-  const invDistSq = 1 / distSq; // 反距离平方
-  const radiusSq = mouse.radius * mouse.radius; // 同样弃用 Math.sqrt()，直接比较平方距离
-  const repulsiveForce = 500; // 鼠标排斥力强度（可调参数）
-  const repulsionForce_adaptive = 0.8; // 自适应排斥力强度（根据鼠标速度动态调整，增加交互感）
-
-  // ========= 卡门涡街 + 尾流填补逻辑（力学流体模拟） =========
-  // if (mouse.active && distSq < radiusSq) {
-
-
-  //   // if (mouse.buttons === 'left') {// 鼠标左键按下时，增加额外的排斥力
-  //   //   this.speedX += dx * invDistSq * 5;
-  //   //   this.speedY += dy * invDistSq * 5;
-  //   // }
-
-  // }
-
-
-
-    if (mouse.buttons === 'left') {// 鼠标左键按下时，所有粒子绕鼠标逆时针旋转
-
-      this.speedX = unitY * invDistSq * 20000; // 旋转（垂直于鼠标指向粒子的方向，形成涡流效果）
-      this.speedY = -unitX * invDistSq * 20000;
-
-      // this.speedX -= dx * invDistSq * 5; // 增加吸引力（更强的交互感）
-      // this.speedY -= dy * invDistSq * 5;
-
-    }
-
-
-    if (distSq < radiusSq) {
-
-    // 1. 鼠标排斥力（靠近指针）
-    this.speedX += unitX * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
-    this.speedY += unitY * invDistSq * (repulsiveForce + repulsionForce_adaptive*mouse.velocity);
-  
-    }
-
-    // 2. 核心：鼠标后方尾流空缺 → 粒子填补力（不空缺也有，但更弱）
-    const trailDX = mouse.x - mouse.prevX;
-    const trailDY = mouse.y - mouse.prevY;
-
-    const velocity_r_x = this.speedX - trailDX;// 粒子相对于鼠标尾流的相对速度
-    const velocity_r_y = this.speedY - trailDY;
-    const omega = (trailDX * unitY - trailDY * unitX) * invDistSq; // 旋转矢量（基于鼠标移动方向和粒子位置，主要求其正负性，关于其相对位置）
-
-
-  // 尝试添加一个吸引力
-  //  this.speedX -= dx * invDistSq * 0.05; // 吸引力（较弱，增加自然感）
-  //  this.speedY -= dy * invDistSq * 0.05;
-
-
-  // 涡街旋转力（模拟流体涡流）
-
-  // todo: 进一步优化：根据鼠标速度动态调整涡街强度（更快的移动产生更强的涡流效果）
-
-
-
-  // 负压区填补：粒子向鼠标尾部空缺聚集
-
-  this.speedX -= omega * velocity_r_y * mouse.fillForce; // 旋转力对粒子速度的影响（垂直于相对速度方向，形成涡流效果）;
-  this.speedY += omega * velocity_r_x * mouse.fillForce; ;
-
-
-  // ========= 统一物理阻尼（丝滑运动） =========
-
-  if (this.speedX > 0.5 || this.speedX < -0.5) this.speedX *= 0.9;
-  if (this.speedY > 0.5 || this.speedY < -0.5) this.speedY *= 0.9;
-
-
-
-  // 引入噪声改变运动轨迹，增加自然感
-  this.speedX += (Math.random() - 0.5) * 0.1;
-  this.speedY += (Math.random() - 0.5) * 0.1;
-  // 自由漂浮 + 边界反弹
-  this.x += this.speedX;
-  this.y += this.speedY;
-  if (this.x < 0 || this.x > width) this.speedX *= -1;
-  if (this.y < 0 || this.y > height) this.speedY *= -1;
-}
-
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = Math.random() - 0.5;
+    this.speedY = Math.random() - 0.5;
   }
 
+  update(step, damping, trailDX, trailDY, repulsion) {
+    if (mouse.active) {
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const distSq = dx * dx + dy * dy;
+      const inWake = distSq < WAKE_RADIUS_SQ && (trailDX !== 0 || trailDY !== 0);
+
+      // 普通漂浮不计算方向；只有交互范围内或按住旋转时才计算。
+      if (mouse.pressed || distSq < RADIUS_SQ || inWake) {
+        // 避免粒子与指针重合时除以零，以及近距离产生过大的力。
+        const safeDistSq = Math.max(distSq, 36);
+        const invDistance = 1 / Math.sqrt(safeDistSq);
+        const unitX = dx * invDistance;
+        const unitY = dy * invDistance;
+
+        if (mouse.pressed) {
+          const rotation = 20000 / safeDistSq;
+          this.speedX = unitY * rotation;
+          this.speedY = -unitX * rotation;
+        }
+
+        if (distSq < RADIUS_SQ) {
+          const force = repulsion / safeDistSq * step;
+          this.speedX += unitX * force;
+          this.speedY += unitY * force;
+        }
+
+        if (inWake) {
+          const relativeX = this.speedX - trailDX;
+          const relativeY = this.speedY - trailDY;
+          const omega = (trailDX * unitY - trailDY * unitX) / safeDistSq;
+          this.speedX -= omega * relativeY * 0.8 * step;
+          this.speedY += omega * relativeX * 0.8 * step;
+        }
+      }
+    }
+
+    if (Math.abs(this.speedX) > 0.5) this.speedX *= damping;
+    if (Math.abs(this.speedY) > 0.5) this.speedY *= damping;
+    this.speedX += (Math.random() - 0.5) * 0.1 * step;
+    this.speedY += (Math.random() - 0.5) * 0.1 * step;
+    this.speedX = Math.max(-5, Math.min(5, this.speedX));
+    this.speedY = Math.max(-5, Math.min(5, this.speedY));
+    this.x += this.speedX * step;
+    this.y += this.speedY * step;
+
+    if (this.x < 0 || this.x > width) {
+      this.x = Math.max(0, Math.min(width, this.x));
+      this.speedX *= -1;
+    }
+    if (this.y < 0 || this.y > height) {
+      this.y = Math.max(0, Math.min(height, this.y));
+      this.speedY *= -1;
+    }
+  }
 }
 
-// 初始化粒子
-for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-
-// 动画循环
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animate);
-}
-animate();
-
-
-window.addEventListener('mousemove', (e) => {
-  mouse.prevX = mouse.x; // 保存上一帧位置（生成尾流）
-  mouse.prevY = mouse.y;
-  mouse.x = e.x;
-  mouse.y = e.y;
-  const dx = mouse.x - mouse.prevX;
-  const dy = mouse.y - mouse.prevY;
-  mouse.velocity = dx * dx + dy * dy; // 计算鼠标速度（用于动态调整涡街强度）
-  // 根据速度动态调整填补强度（更快的移动产生更强的填补效果）
-//   mouse.vortexStrength = 0.01 + Math.min(mouse.velocity * 0.000001, 0.05);
-  mouse.active = true;
-
-});// 鼠标监听
-
-window.addEventListener('mousedown', (e) => {
-  if (e.button === 0) { // 鼠标左键按下
-    mouse.buttons = 'left';
-  }
-});
-
-window.addEventListener('mouseup', (e) => {
-  if (e.button === 0) { // 鼠标左键放开
-    mouse.buttons = null;
-  }
-});
-
-// 手机端触摸滑动（模拟鼠标移动，核心修复）
-window.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // 禁止页面抖动
-  const touch = e.touches[0];
-  mouse.prevX = touch.clientX;
-  mouse.prevY = touch.clientY;
-  mouse.x = touch.clientX;
-  mouse.y = touch.clientY;
-  mouse.active = true;
-  mouse.buttons = 'left'; // 模拟鼠标左键按下
-});
-
-window.addEventListener('touchmove', (e) => {
-  e.preventDefault(); // 禁止页面滚动干扰
-  const touch = e.touches[0];
-  // 同步记录轨迹（保证空缺填补/涡街效果生效）
-  mouse.prevX = mouse.x;
-  mouse.prevY = mouse.y;
-  mouse.x = touch.clientX;
-  mouse.y = touch.clientY;
-});
-
-window.addEventListener('touchend', () => {
-  mouse.active = false; // 手指离开=鼠标移出
-  mouse.buttons = null; // 模拟鼠标左键放开
-});
-
-// 窗口大小适配
-window.addEventListener('resize', () => {
-  width = window.innerWidth;
-  height = window.innerHeight;
+function resizeCanvas() {
+  const oldWidth = width;
+  const oldHeight = height;
+  width = Math.max(1, window.innerWidth);
+  height = Math.max(1, window.innerHeight);
+  // 使用 CSS 像素，避免高分屏额外放大背景画布的绘制开销。
   canvas.width = width;
   canvas.height = height;
+  for (const particle of particles) {
+    particle.x *= width / oldWidth;
+    particle.y *= height / oldHeight;
+  }
 
+  const limit = width > 1200 ? 1800 : width > 768 ? 700 : 280;
+  const count = Math.min(limit, Math.max(80, Math.round(width * height / 1200)));
+  if (particles.length > count) particles.length = count;
+  while (particles.length < count) particles.push(new Particle());
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = '#1a73e8';
+  // 同色粒子合并为一次填充，避免每个粒子单独提交绘制。
+  ctx.beginPath();
+  for (const particle of particles) {
+    ctx.moveTo(particle.x + particle.size, particle.y);
+    ctx.arc(particle.x, particle.y, particle.size, 0, TWO_PI);
+  }
+  ctx.fill();
+}
+
+function animate(timestamp) {
+  animationId = null;
+  if (document.hidden || reducedMotion.matches) return;
+
+  // 高刷新率屏幕最多绘制 60 帧；位移按实际时间计算。
+  if (timestamp >= nextFrameTime) {
+    const step = lastFrameTime === null ? 1 : Math.min((timestamp - lastFrameTime) / FRAME_INTERVAL, 2);
+    lastFrameTime = timestamp;
+    nextFrameTime = Math.max(nextFrameTime + FRAME_INTERVAL, timestamp);
+    const damping = Math.pow(0.9, step);
+    // 每帧只取一次指针位移，停下后尾流不会持续施力。
+    const trailDX = mouse.active ? Math.max(-40, Math.min(40, (mouse.x - mouse.prevX) / step)) : 0;
+    const trailDY = mouse.active ? Math.max(-40, Math.min(40, (mouse.y - mouse.prevY) / step)) : 0;
+    const repulsion = 500 + 0.8 * (trailDX * trailDX + trailDY * trailDY);
+    for (const particle of particles) {
+      particle.update(step, damping, trailDX, trailDY, repulsion);
+    }
+    mouse.prevX = mouse.x;
+    mouse.prevY = mouse.y;
+    drawParticles();
+  }
+
+  animationId = requestAnimationFrame(animate);
+}
+
+function clearPointer() {
+  mouse.active = false;
+  mouse.pressed = false;
+}
+
+function syncAnimation() {
+  if (animationId !== null) cancelAnimationFrame(animationId);
+  animationId = null;
+  lastFrameTime = null;
+  nextFrameTime = 0;
+  clearPointer();
+  if (!document.hidden) {
+    if (reducedMotion.matches) drawParticles();
+    else animationId = requestAnimationFrame(animate);
+  }
+}
+
+function updatePointer(event) {
+  if (!mouse.active) {
+    mouse.prevX = event.clientX;
+    mouse.prevY = event.clientY;
+  }
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+  mouse.active = true;
+}
+
+// 统一鼠标与触摸输入，保留手机页面的正常滚动与链接点击。
+window.addEventListener('pointermove', (event) => {
+  if (event.isPrimary) updatePointer(event);
+}, { passive: true });
+window.addEventListener('pointerdown', (event) => {
+  if (event.isPrimary && event.button === 0) {
+    updatePointer(event);
+    mouse.pressed = true;
+  }
+}, { passive: true });
+window.addEventListener('pointerup', (event) => {
+  if (event.isPrimary) {
+    mouse.pressed = false;
+    if (event.pointerType !== 'mouse') clearPointer();
+  }
+}, { passive: true });
+window.addEventListener('pointercancel', clearPointer, { passive: true });
+window.addEventListener('pointerout', (event) => {
+  if (event.relatedTarget === null) clearPointer();
+}, { passive: true });
+window.addEventListener('blur', clearPointer);
+document.addEventListener('visibilitychange', syncAnimation);
+reducedMotion.addEventListener('change', syncAnimation);
+window.addEventListener('resize', () => {
+  if (resizeId !== null) return;
+  resizeId = requestAnimationFrame(() => {
+    resizeId = null;
+    resizeCanvas();
+    if (reducedMotion.matches) drawParticles();
+  });
 });
 
-window.addEventListener('mouseout', () => mouse.active = false);// 鼠标离开时停用交互
+resizeCanvas();
+syncAnimation();
 
 // 内容隐藏/显示功能
 const toggleBtn = document.getElementById('toggleBtn');
-// 需要隐藏的所有页面元素
 const pageContent = [
   document.querySelector('.navbar'),
   document.querySelector('.header'),
@@ -231,9 +217,6 @@ toggleBtn.addEventListener('click', () => {
   pageContent.forEach(el => {
     el.classList.toggle('content-hidden', isHidden);
   });
-
-  canvas.classList.toggle('clear', isHidden); // 切换粒子画布的清晰度
-
-  // 切换按钮文字
+  canvas.classList.toggle('clear', isHidden);
   toggleBtn.textContent = isHidden ? ' show personal page' : ' hide content';
 });
