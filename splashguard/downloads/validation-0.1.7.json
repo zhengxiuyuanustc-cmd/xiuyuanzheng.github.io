@@ -1,0 +1,43 @@
+{
+  "version": "0.1.7-preview",
+  "version_code": 8,
+  "source_commit": "ff2e8c10970835bda409fb909844e9c63031d94f",
+  "apk": {
+    "file": "SplashGuard-0.1.7-preview.apk",
+    "bytes": 41509,
+    "sha256": "9acc48129e9f12d282cc18da73374c0a38fe32e17596b87eba044371ab6c3e64",
+    "certificate_sha256": "48bba90fb630f2b95d30fe7d3420dd7e884fefbaac842f0416424ba42d2517c4",
+    "debuggable": true,
+    "development_signature": true,
+    "internet_permission": false
+  },
+  "build": {
+    "path": "tools/build-local.ps1",
+    "jdk": "21.0.8",
+    "platform": 35,
+    "standard_gradle_verified": false
+  },
+  "checks": {
+    "ad_rules": 48,
+    "skip_session": 40,
+    "onboarding_policy": 11,
+    "total_passed": 99,
+    "signature_verified": true,
+    "core_rules_unchanged_from_016": true
+  },
+  "manual_report": {
+    "app_opened": true,
+    "single_app_picker_repeated_taps_and_reopen": "user_confirmed_functioning",
+    "all_first_run_wizard_steps_verified": false,
+    "new_real_ad_test_in_017": false
+  },
+  "device_readback": {
+    "latest_candidate_apk_hash_verified": false,
+    "reason": "Device disconnected before final APK readback"
+  },
+  "website_qa": {
+    "final_browser_and_narrow_screen_visual_check_completed": false,
+    "reason": "Computer Use safety gateway could not reliably determine Windows browser URL; UI automation stopped"
+  },
+  "recorded_at": "2026-10-25T07:26:05+00:00"
+}

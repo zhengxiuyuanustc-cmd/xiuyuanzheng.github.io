@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#126859">
+  <meta name="description" content="开屏清净开发文档：为识别规则提交可审查的证据。免登录阅读，正文来自项目仓库Markdown。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; font-src 'none'; script-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>为识别规则提交可审查的证据 · 开屏清净开发文档</title>
+  <link rel="icon" href="../assets/shield.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到文档正文</a>
+  <header class="site-header"><a class="brand" href="../"><img src="../assets/shield.svg" width="30" height="30" alt=""><span>开屏清净<small>开发文档</small></span></a><nav aria-label="网站入口"><a href="../">下载站</a><a href="../../">作者主页</a><a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/tree/feature/simple-ui-onboarding">源码 ↗</a></nav></header>
+  <div class="doc-layout">
+    <aside class="doc-sidebar"><p class="nav-label">开发与共建</p><nav class="chapter-nav" aria-label="开发文档章节"><a href="index.html">开始构建</a><a href="architecture.html">架构与数据流</a><a class="active" aria-current="page" href="rules.html">规则贡献</a><a href="roadmap.html">共同路线图</a></nav><details class="toc"><summary>本页目录</summary><nav aria-label="本页章节"><a href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E9%97%AE%E9%A2%98%E7%B1%BB%E5%88%AB">先确认问题类别</a><a href="#%E5%BD%93%E5%89%8D%E5%8C%B9%E9%85%8D%E8%BE%B9%E7%95%8C">当前匹配边界</a><a href="#%E6%AF%8F%E6%9D%A1%E8%A7%84%E5%88%99%E9%83%BD%E8%A6%81%E6%9C%89%E6%AD%A3%E4%BE%8B%E4%B8%8E%E5%8F%8D%E4%BE%8B">每条规则都要有正例与反例</a><a href="#%E8%84%B1%E6%95%8F%E6%A0%B7%E6%9C%AC%E6%80%8E%E4%B9%88%E6%95%B4%E7%90%86">脱敏样本怎么整理</a><a href="#%E6%8F%90%E4%BA%A4%E4%B8%8E%E9%AA%8C%E8%AF%81">提交与验证</a></nav></details></aside>
+    <main id="main" class="doc-main"><p class="doc-kicker">免费开源 · 免登录阅读</p><p class="baseline-note">当前 0.1.7 开发基线位于 <code>feature/simple-ui-onboarding</code>；<code>main</code> 尚为旧版本。首次克隆请按<a href="index.html#环境与源码">开始构建</a>中的工作分支步骤操作。</p><article class="markdown-body"><h1 id="为识别规则提交可审查的证据">为识别规则提交可审查的证据</h1>
+<p>规则文件是 <code>AdRules.java</code>，会话约束是 <code>SkipSession.java</code>，服务提交动作之前还会检查前台、解锁、包名和窗口条件。规则贡献不是“尽量多点几个地方”，而是为一个明确场景增加能解释、能测试的判断。</p>
+<h2 id="先确认问题类别">先确认问题类别</h2>
+<ul>
+<li>没出现广告：无法据此验证跳过成功，请按“未出现广告”记录。</li>
+<li>服务未连接、应用未选择或功能开关关闭：先修复设置与状态，通常不需要放宽规则。</li>
+<li>广告已出现，控件符合预期但动作未生效：检查点击结果、父控件或异步回调，不要立即增加匹配范围。</li>
+<li>开屏时段外的应用内广告：当前不支持，请转到<a href="roadmap.html">应用内广告研究</a>，不要直接延长 12 秒预算。</li>
+</ul>
+<h2 id="当前匹配边界">当前匹配边界</h2>
+<p>通用候选位于右上区域，并有尺寸上限。明确“跳过广告 / 关闭广告 / skip ad”等标签与“跳过 / skip”加广告证据、倒计时、特定 splash SDK 标识的路径不同。某个词在单元测试中命中，不表示可以脱离服务的开屏会话或窗口检查直接点击。</p>
+<p>B站规则额外要求精确包名 <code>tv.danmaku.bili</code>、已知开屏容器或类名，以及明确的跳过控件 ID 和标签。9.15.0 的控件可以出现在右下角，因此使用特定场景规则，不把所有应用的通用点击区域扩到页面底部。</p>
+<p>当前一个已收录样本是：</p>
+<pre><code class="language-json">{
+  &quot;app_version&quot;: &quot;9.15.0&quot;,
+  &quot;screen&quot;: [0, 0, 1200, 2652],
+  &quot;scene&quot;: {&quot;id&quot;: &quot;tv.danmaku.bili:id/splash_layout&quot;, &quot;class&quot;: &quot;android.widget.FrameLayout&quot;},
+  &quot;skip&quot;: {&quot;id&quot;: &quot;tv.danmaku.bili:id/count_down&quot;, &quot;class&quot;: &quot;android.widget.TextView&quot;, &quot;text&quot;: &quot;跳过5&quot;, &quot;bounds&quot;: [868, 2425, 1148, 2565]}
+}
+</code></pre>
+<p>完整过滤样本见 <a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/blob/feature/simple-ui-onboarding/tests/fixtures/bilibili-9.15.0-tmall-splash-layout.json"><code>tests/fixtures/bilibili-9.15.0-tmall-splash-layout.json</code></a>。数值描述这一次样本，不是可直接复制到其他手机的固定点击坐标。</p>
+<h2 id="每条规则都要有正例与反例">每条规则都要有正例与反例</h2>
+<p>正例至少说明：目标应用和版本、场景证据、明确跳过标签、精确标识、控件类型及相对屏幕位置。建议先加入会失败的回归检查，再实现最小规则，使同一检查通过。</p>
+<p>反例至少包括与改动有关的几个方向：</p>
+<table>
+<thead>
+<tr>
+<th>反例</th>
+<th>必须拒绝的原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同标签位于普通内容页</td>
+<td>没有受支持的广告场景或不在开屏会话</td>
+</tr>
+<tr>
+<td>普通“×”“关闭”“下一步”</td>
+<td>可能属于内容、弹窗、导航或用户操作</td>
+</tr>
+<tr>
+<td>“允许”“同意”“下载”“安装”“领取”“打开”</td>
+<td>不是跳过广告的目标</td>
+</tr>
+<tr>
+<td>错误包名、超大控件或越过窗口边界</td>
+<td>目标与范围不可靠</td>
+</tr>
+<tr>
+<td>相似 ID，但没有受支持的容器/标签组合</td>
+<td>不能只凭一个模糊标识猜测</td>
+</tr>
+<tr>
+<td>锁屏、过期会话、旧回调或已取消选择的应用</td>
+<td>处理上下文已经失效</td>
+</tr>
+</tbody>
+</table>
+<p>不要添加固定屏幕坐标、普通“×”泛匹配、无广告证据的任意关闭按钮、包名通配或页面常驻扫描。不要通过“匹配失败就点返回键”、自动确认权限或点击广告入口来提高计数。</p>
+<h2 id="脱敏样本怎么整理">脱敏样本怎么整理</h2>
+<p>只保留支撑规则的最小字段：应用/版本、广告场景标识、控件 ID、类名、标签、可见/启用状态、边界及屏幕尺寸。记录采样日期和限制，例如是否只覆盖部分节点、是否在诊断工具介入时取得。</p>
+<p>不要提交完整界面树、账户页面、聊天内容、付款或授权信息、手机号、IMEI、设备序列号、PIN、调试凭据、原始广告跳转链接或完整手机日志。确需截图时先裁掉无关区域并遮盖个人信息；优先提交过滤后的 JSON。</p>
+<p><code>tests/fixtures/</code> 是供人审阅的样本，当前测试不会自动遍历所有 JSON。新增文件时还要明确把相应正反例加入 <code>AdRulesTest</code> 或 <code>SkipSessionTest</code>，不能只放样本就宣称已覆盖。</p>
+<h2 id="提交与验证">提交与验证</h2>
+<p>在 PR 中说明新支持的具体场景、修改前失败和修改后通过的结果，以及未验证的设备和素材。运行<a href="index.html">纯 Java 检查</a>，并在条件允许时补实机结果。</p>
+<p>实机结论区分“发现候选”“系统接受动作”“广告提前消失”“物理晃动未跳转”；测试一次广告不能推广为全机型或所有素材支持。真实样本暂未再次投放时，保留待复测状态。</p>
+</article><div class="source-note"><p>正文来自仓库 <code>docs/RULES.md</code>，本页不加载远程脚本、字体或统计。</p><a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/blob/feature/simple-ui-onboarding/docs/RULES.md">在 GitHub 查看 Markdown 源文档 ↗</a></div></main>
+  </div>
+  <footer class="site-footer"><p>一起完善，可以从一个小问题开始。</p><nav aria-label="参与共建入口"><a href="../">返回下载站</a><a href="../../">作者主页</a><a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/issues/3">机型共建 · Issue #3 ↗</a><a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/issues/2">应用内广告探索 · Issue #2 ↗</a><a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/blob/feature/simple-ui-onboarding/CONTRIBUTING.md">贡献流程 ↗</a></nav><small>这些文档和下载无需账号。公开提交 Issue 或 PR 时，由 GitHub 要求账号。</small></footer>
+</body>
+</html>

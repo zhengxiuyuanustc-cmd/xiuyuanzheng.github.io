@@ -23,6 +23,8 @@
   $("#empty-contribute").addEventListener("click", () => {
     const select = $("#contribution-brand");
     if (brand !== "全部") select.value = brand;
+    $(".feedback-panel").open = true;
+    invalidateDraft();
   });
   let toastTimer;
   function toast(message) {

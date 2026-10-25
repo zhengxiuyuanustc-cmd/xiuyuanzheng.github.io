@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "repository": "zhengxiuyuanustc-cmd/SplashGuard",
+  "source": "github-release-apk-assets",
+  "scope_note": "仅为GitHub发行附件中的APK下载次数，不含本站直接下载，不代表安装量或独立用户。",
+  "captured_at": "2026-10-25T07:20:12.000Z",
+  "api_pages": 1,
+  "total_download_count": 2,
+  "asset_count": 1,
+  "assets": [
+    {
+      "id": 671942312,
+      "name": "SplashGuard-0.1.4-preview.apk",
+      "release_tag": "v0.1.4-preview",
+      "download_count": 2
+    }
+  ]
+}
