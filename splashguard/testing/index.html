@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#126859">
+  <meta name="description" content="开屏清净兼容试用与本地反馈。免登录下载，反馈内容先在浏览器内整理，由你自行分享，不自动上传。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+  <link rel="canonical" href="https://zhengxiuyuanustc-cmd.github.io/xiuyuanzheng.github.io/splashguard/testing/">
+  <link rel="icon" href="../assets/shield.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="trial.css">
+  <script src="feedback.js" defer></script>
+  <title>兼容试用与反馈 · 开屏清净</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="header"><a class="brand" href="../"><img src="../assets/shield.svg" width="34" height="34" alt=""><span>开屏清净<small>SplashGuard</small></span></a><a class="text-link" href="../">返回下载首页 →</a></header>
+  <main id="main" class="trial-wrap">
+    <section class="trial-hero" aria-labelledby="trial-title">
+      <span class="eyebrow">自愿参与 · 不需要账号</span>
+      <h1 id="trial-title">一起让更多手机，<br>少一点广告打扰。</h1>
+      <p class="trial-lead">如果你的手机仍有广告没跳过，可以试用兼容测试版，再把实际现象告诉邀请你测试的人。下载与反馈完全自愿。</p>
+      <div class="trial-badges"><span>免费使用</span><span>App无联网权限</span><span>随时可以暂停</span></div>
+    </section>
+    <section class="trial-card download-card" aria-labelledby="download-title">
+      <div><span class="eyebrow">Android兼容测试版</span><h2 id="download-title">开屏清净 0.1.14</h2><p>新增规则来源与历史保护，收紧误触判断。此版尚需更多手机验证，并非所有机型均已适配。</p><p class="subtle" id="acceptance-note">1645项规则检查及标准Android构建已通过；Android 8、15、17隔离模拟器各8项验收通过，厂商真机和真实广告效果仍待验证。</p></div>
+      <div class="download-actions"><a class="button" href="../downloads/SplashGuard-0.1.14-nondebug-preview.apk" download>下载兼容测试版 ↓</a><p>免登录 · Android 8.0及以上</p><a class="text-link" href="../#download">查看原公开预览版 →</a></div>
+      <details class="hash-details"><summary>版本、校验与适用范围</summary><div class="details-body"><p>版本0.1.14 / code 15，非调试构建，沿用原预览的升级签名。安装时按手机系统提示确认，无需把PIN发给任何人。</p><p>本包为Android APK。<b>原生鸿蒙自动跳过暂不支持</b>，请勿反复尝试“开全权限”。</p><p>坐标点击目前暂停，只尝试按钮自身动作，部分旧布局可能少跳过。防摇一摇仍优先使用广告专用设置，保留正常旋转和体感功能。</p><p>SHA-256：</p><code class="apk-hash">1bf8732b99219d460872406b8ca287241a59c80d3cf73c59fae70bb22a5d9aab</code><p><a href="../downloads/validation-0.1.14.json">查看公开验证记录</a> · <a href="https://github.com/zhengxiuyuanustc-cmd/SplashGuard/pull/4" target="_blank" rel="noopener noreferrer">源码与检查记录 ↗</a></p></div></details>
+    </section>
+    <section class="trial-section" aria-labelledby="steps-title"><h2 id="steps-title">怎么试？只记录实际现象。</h2><ol class="trial-steps"><li><b>打开并核对状态</b><p>沿用已有设置或按向导选择应用、启用服务。无障碍“已开启”和服务“已连接”要分别核对。</p></li><li><b>正常打开一个应用</b><p>可先清掉目标应用后台。广告投放不稳定，<strong>没有出现广告不能算跳过成功</strong>，也不必反复尝试。</p></li><li><b>把结果交给邀请人</b><p>可以在App设置帮助中预览兼容报告后自行分享，也可使用下方表格；不需要注册GitHub。</p></li></ol><p class="subtle">不想继续时，在App首页暂停自动跳过，或到系统关闭本服务。日常使用无需导入开发者演示规则。</p></section>
+    <section class="trial-card" aria-labelledby="feedback-title"><span class="eyebrow">只在本页整理 · 不自动发送</span><h2 id="feedback-title">简单记一下，方便一起改进。</h2><p>不确定的信息可以留空。生成后先检查，再复制给邀请你测试的人；本站不会替你发送。</p>
+      <form id="trial-feedback" novalidate>
+        <div class="trial-fields">
+          <label>手机品牌 <span>必选</span><select name="brand" required><option value="">请选择</option><option>华为</option><option>荣耀</option><option>小米</option><option>OPPO</option><option>真我</option><option>一加</option><option>vivo</option><option>iQOO</option><option>三星</option><option>魅族</option><option>Google / Pixel</option><option>其他 / 不确定</option></select></label>
+          <label>开屏清净版本<select name="toolVersion"><option>不确定</option><option>0.1.14</option><option>0.1.7</option><option>其他版本</option></select></label>
+          <label>手机型号 <span>可留空</span><input name="model" maxlength="80" autocomplete="off" placeholder="在“设置→关于手机”中查看"></label>
+          <label>系统及完整版本 <span>可留空</span><input name="system" maxlength="120" autocomplete="off" placeholder="例如MagicOS、HarmonyOS及版本"></label>
+          <label>目标应用 <span>必填</span><input name="target" maxlength="100" autocomplete="off" placeholder="例如B站、知乎、百度" required></label>
+          <label>目标应用版本 <span>可留空</span><input name="targetVersion" maxlength="60" autocomplete="off" placeholder="不清楚可留空"></label>
+          <label>实际现象 <span>必选</span><select name="outcome" required><option value="">请选择实际观察</option><option value="skipped">广告出现，并提前自动关闭</option><option value="missed">广告出现，但没有自动关闭</option><option value="redirected">误点或晃动后跳进广告</option><option value="no_ad">没有出现广告，暂时无法判断</option><option value="service">服务无法连接或被系统停止</option><option value="unsupported">无法安装或系统不支持授权</option></select></label>
+          <label>首页服务状态<select name="serviceStatus"><option>不确定</option><option>已就绪 / 已连接</option><option>等待服务连接</option><option>权限未开启</option><option>仅查看设置指引</option></select></label>
+        </div>
+        <label>补充说明 <span>可留空</span><textarea name="notes" rows="3" maxlength="600" placeholder="可写系统提示原文、何时出现问题。不需要完整日志。"></textarea></label>
+        <p class="subtle">请勿填写PIN、密码、手机号、设备序列号或账号画面。输入只留在当前页面，刷新后不保留。</p>
+        <div class="actions"><button class="button" type="submit">生成反馈文字 →</button><button id="clear-feedback" class="text-button" type="button">清空本页</button></div>
+        <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        <div id="trial-result" class="trial-result" hidden><h3>先核对，再自行分享。</h3><textarea id="trial-report" rows="12" readonly aria-label="生成的兼容反馈文字"></textarea><div class="actions"><button id="copy-feedback" class="button secondary" type="button">复制反馈</button><button id="save-feedback" class="text-button" type="button">保存文字文件 ↓</button></div><p class="subtle">生成或保存不会上传。请自行粘贴到你与邀请人的对话中；用户报告经复核后才作为兼容证据。</p></div>
+      </form>
+      <noscript><p>本页整理反馈需要JavaScript。下载不受影响，也可直接把手机型号、应用和实际现象发给邀请人。</p></noscript>
+    </section>
+    <section class="trial-section trial-privacy"><h2>把选择留给你。</h2><p>试用、反馈和支持作者都自愿，软件不会因是否反馈或打赏限制功能。反馈表不调用网络接口、不使用统计脚本，也不写入浏览器长期存储。</p><div class="actions"><a class="text-link" href="../#how">查看原理与隐私 →</a><a class="text-link" href="../#control">如何暂停或停用 →</a></div></section>
+  </main>
+  <footer class="footer wrap"><a class="text-link" href="../">开屏清净首页</a><a class="text-link" href="../../">作者主页 →</a><p class="subtle">兼容试用入口 · 资料更新于2026-10-27</p></footer>
+</body>
+</html>
