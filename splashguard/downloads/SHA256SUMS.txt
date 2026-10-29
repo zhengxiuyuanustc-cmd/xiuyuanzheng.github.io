@@ -1,3 +1,4 @@
 9acc48129e9f12d282cc18da73374c0a38fe32e17596b87eba044371ab6c3e64  SplashGuard-0.1.7-preview.apk
 873cdc37097de7cd39531aacda0cc4e3d06083d6a3cc9f2721e5320e968cb553  SplashGuard-0.1.4-preview.apk
 1bf8732b99219d460872406b8ca287241a59c80d3cf73c59fae70bb22a5d9aab  SplashGuard-0.1.14-nondebug-preview.apk
+e8b4fb53c515c666a43c734a530db7ee8b1207d0175178f4db198cddc125e58c  SplashGuard-0.1.15-nondebug-preview.apk

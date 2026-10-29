@@ -6,7 +6,7 @@
     const brand=clean(data.brand,40),target=clean(data.target,100);
     if(!brand||!target||!Object.prototype.hasOwnProperty.call(outcomes,data.outcome))throw new Error("请先选择手机品牌、填写目标应用，并选择实际现象。");
     const optional=(key,limit)=>clean(data[key],limit)||"未填写 / 不确定";
-    return ["开屏清净兼容反馈（用户报告，尚未复核）",`填写时间（本机）：${clean(dateText,80)}`,`开屏清净版本：${optional("toolVersion",40)}`,`手机品牌：${brand}`,`手机型号：${optional("model",80)}`,`系统及版本：${optional("system",120)}`,`目标应用：${target}`,`目标应用版本：${optional("targetVersion",60)}`,`实际现象：${outcomes[data.outcome]}`,`首页服务状态：${optional("serviceStatus",80)}`,"",`补充说明：${optional("notes",600)}`,"","未出现广告不能算跳过成功。本记录不等于该机型已完成适配。"].join("\n");
+    return ["开屏清净兼容反馈（用户报告，尚未复核）",`填写时间（本机）：${clean(dateText,80)}`,`开屏清净版本：${optional("toolVersion",40)}`,`手机品牌：${brand}`,`手机型号：${optional("model",80)}`,`系统及版本：${optional("system",120)}`,`目标应用：${target}`,`目标应用版本：${optional("targetVersion",60)}`,`进入应用的方式：${optional("entryMode",80)}`,`实际现象：${outcomes[data.outcome]}`,`首页服务状态：${optional("serviceStatus",80)}`,"",`补充说明：${optional("notes",600)}`,"","未出现广告不能算跳过成功。本记录不等于该机型已完成适配。"].join("\n");
   }
   if(typeof module!=="undefined"&&module.exports)module.exports={buildReport,outcomes};
   if(typeof document==="undefined")return;
