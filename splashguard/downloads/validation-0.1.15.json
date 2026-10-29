@@ -97,7 +97,7 @@
       "warm return uses retained synthetic Activity/process, not real Bilibili ads"
     ]
   },
-  "device_acceptance": "installed APK hash verified; actual warm Bilibili ad pending",
+  "device_acceptance": "installed hash and service connection verified; Bilibili 9.16.1 Tmall warm-return ad observed missed; investigation ongoing",
   "native_harmony_automatic_skip_supported": false,
   "note": "仅更新独立兼容试用。确认应用实际离开并返回才重新处理；每轮12秒/两次动作，普通弹窗不重开。默认下载0.1.7保留。"
 }

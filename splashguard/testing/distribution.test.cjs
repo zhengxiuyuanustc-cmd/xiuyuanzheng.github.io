@@ -9,16 +9,16 @@ const read = name => fs.readFileSync(path.join(root, name), "utf8");
 const digest = name => crypto.createHash("sha256").update(fs.readFileSync(path.join(root, name))).digest("hex");
 
 test("trial APK matches its public identity and source validation record", () => {
-  const meta = JSON.parse(read("downloads/validation-0.1.15.json"));
-  assert.equal(meta.version, "0.1.15");
-  assert.equal(meta.version_code, 16);
+  const meta = JSON.parse(read("downloads/validation-0.1.16.json"));
+  assert.equal(meta.version, "0.1.16");
+  assert.equal(meta.version_code, 17);
   assert.equal(meta.channel, "compatibility-preview");
-  assert.equal(meta.file, "SplashGuard-0.1.15-nondebug-preview.apk");
-  assert.equal(meta.sha256, "e8b4fb53c515c666a43c734a530db7ee8b1207d0175178f4db198cddc125e58c");
+  assert.equal(meta.file, "SplashGuard-0.1.16-nondebug-preview.apk");
+  assert.equal(meta.sha256, "1decac1c3a0cff3c0c23cc8b626317d9d25dbb84c84189965b5bdb0df4f4fa51");
   assert.equal(digest("downloads/" + meta.file), meta.sha256);
   assert.equal(fs.statSync(path.join(root, "downloads", meta.file)).size, meta.bytes);
   assert.equal(meta.bytes, 135797);
-  assert.equal(meta.main_source_commit, "5c9212c019b8878189d0e3f844203dcb5461397f");
+  assert.equal(meta.main_source_commit, "d46b9e92bbc821335e71b3f9986ad539a2f29c84");
   assert.equal(meta.debuggable, false);
   assert.deepEqual(meta.declared_uses_permissions, []);
   assert.equal(meta.can_perform_gestures, false);
@@ -37,11 +37,11 @@ test("all mirrored APK checksums agree and the original primary download remains
     assert.equal(digest("downloads/" + match[2]), match[1]);
   }
   assert.ok(seen.has("SplashGuard-0.1.7-preview.apk"));
-  assert.ok(seen.has("SplashGuard-0.1.15-nondebug-preview.apk"));
+  assert.ok(seen.has("SplashGuard-0.1.16-nondebug-preview.apk"));
   assert.equal(digest("downloads/SplashGuard-0.1.7-preview.apk"), "9acc48129e9f12d282cc18da73374c0a38fe32e17596b87eba044371ab6c3e64");
   const home = read("index.html");
   assert.ok(home.includes('href="downloads/SplashGuard-0.1.7-preview.apk"'));
-  assert.ok(!home.includes('href="downloads/SplashGuard-0.1.15-nondebug-preview.apk"'));
+  assert.ok(!home.includes('href="downloads/SplashGuard-0.1.16-nondebug-preview.apk"'));
   assert.ok(home.includes('href="testing/"'));
 });
 
